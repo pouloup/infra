@@ -1,0 +1,43 @@
+version: "3.8"
+
+secrets:
+  mysql_password:
+    file: mysql.password
+  mysql_root_password:
+    file: mysql_root.password
+
+services:
+  nextcloud_db:
+    container_name: nextcloud_db
+    image: mariadb
+    secrets:
+      - mysql_password
+      - mysql_root_password
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
+    volumes:
+      - ./nextcloud/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: '/run/secrets/mysql_root_password'
+      MYSQL_PASSWORD_FILE: '/run/secrets/mysql_password'
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: nextcloud
+
+  nextcloud:
+    container_name: nextcloud
+    image: lscr.io/linuxserver/nextcloud:latest
+    restart: always
+    ports:
+      - 444:443
+    links:
+      - nextcloud_db
+    volumes:
+      - ./nextcloud/appdata:/config
+      - ./nextcloud/data:/data
+    environment:
+      MYSQL_PASSWORD_FILE: '/run/secrets/mysql_password'
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: nextcloud
+      MYSQL_HOST: nextcloud_db
+      PUID: ${U_UID}
+      PGID: ${U_GID}

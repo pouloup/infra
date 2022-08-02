@@ -1,0 +1,16 @@
+---
+version: "3.8"
+services:
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=${U_UID}
+      - PGID=${U_GID}
+      - VERSION=latest
+    volumes:
+      - ./plexmediaserver:/config
+      - /tmp:/transcode
+      - /nas:/nas
+    restart: unless-stopped

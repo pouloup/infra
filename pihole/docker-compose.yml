@@ -1,0 +1,30 @@
+version: "3.8"
+
+secrets:
+  pihole_password:
+    file: pihole.password
+
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    secrets:
+      - pihole_password
+    environment:
+      TZ: 'Europe/Paris'
+      WEBPASSWORD_FILE: '/run/secrets/pihole_password'
+    volumes:
+      - ./etc-pihole:/etc/pihole
+      - ./etc-dnsmasq.d:/etc/dnsmasq.d
+      # run unless you like errors & chmod 666 on file
+      # mkdir -p ./var-log/lighttpd ; touch ./var-log/pihole.log ; touch ./var-log/lighttpd/access.log ; touch ./var-log/lighttpd/error.log first
+      # chmod 666 ./var-log/pihole.log ; chmod 666 ./var-log/lighttpd/access.log ; chmod 666 ./var-log/lighttpd/error.log
+      - ./var-log:/var/log
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - '53:53/tcp'
+      - '53:53/udp'
+      - "67:67/udp"
+      - '8053:80/tcp'
+    restart: unless-stopped

@@ -1,0 +1,53 @@
+version: "3.8"
+
+secrets:
+  gitea_password:
+    file: gitea.password
+  postgres_password:
+    file: postgres.password
+
+networks:
+  gitea:
+    external: false
+
+services:
+  gitea:
+    image: gitea/gitea:latest
+    container_name: gitea
+    secrets:
+      - gitea_password
+    environment:
+      - USER_UID=${U_UID}
+      - USER_GID=${U_GID}
+      - GITEA__database__DB_TYPE=postgres
+      - GITEA__database__HOST=db:5432
+      - GITEA__database__NAME=gitea
+      - GITEA__database__USER=gitea
+      - GITEA__database__PASSWD_FILE=/run/secrets/gitea_password
+      - GITEA__REPOSITORY__ENABLE_PUSH_CREATE_USER=true
+    restart: always
+    networks:
+      - gitea
+    volumes:
+      - ./data/gitea:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "3000:3000"
+      - "222:22"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14
+    restart: always
+    secrets:
+      - postgres_password
+    environment:
+      - POSTGRES_USER=gitea
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+      - POSTGRES_DB=gitea
+    networks:
+      - gitea
+    volumes:
+      - ./data/db:/var/lib/postgresql/data

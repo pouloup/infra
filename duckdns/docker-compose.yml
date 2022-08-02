@@ -1,0 +1,23 @@
+---
+version: "3.8"
+
+secrets:
+  duckdns_token:
+    file: duckdns.token
+
+services:
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:latest
+    container_name: duckdns
+    secrets:
+      - duckdns_token
+    environment:
+      - PUID=${U_UID} #optional
+      - PGID=${U_GID} #optional
+      - TZ=Europe/Paris
+      - SUBDOMAINS=dune-local
+      - FILE__TOKEN=/run/secrets/duckdns_token
+      - LOG_FILE=true #optional
+    volumes:
+      - ./data/config:/config #optional
+    restart: unless-stopped
