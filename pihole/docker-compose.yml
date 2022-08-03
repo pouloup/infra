@@ -4,6 +4,10 @@ secrets:
   pihole_password:
     file: pihole.password
 
+networks:
+  swagnet:
+    external: true
+
 services:
   pihole:
     container_name: pihole
@@ -17,7 +21,7 @@ services:
       - ./etc-pihole:/etc/pihole
       - ./etc-dnsmasq.d:/etc/dnsmasq.d
       # run unless you like errors & chmod 666 on file
-      # mkdir -p ./var-log/lighttpd ; touch ./var-log/pihole.log ; touch ./var-log/lighttpd/access.log ; touch ./var-log/lighttpd/error.log first
+      # mkdir -p ./var-log/lighttpd ; touch ./var-log/pihole.log ; touch ./var-log/lighttpd/access.log ; touch ./var-log/lighttpd/error.log
       # chmod 666 ./var-log/pihole.log ; chmod 666 ./var-log/lighttpd/access.log ; chmod 666 ./var-log/lighttpd/error.log
       - ./var-log:/var/log
     cap_add:
@@ -27,4 +31,6 @@ services:
       - '53:53/udp'
       - "67:67/udp"
       - '8053:80/tcp'
+    networks:
+      - swagnet
     restart: unless-stopped

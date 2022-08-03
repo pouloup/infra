@@ -1,5 +1,10 @@
 ---
 version: "3.8"
+
+networks:
+  swagnet:
+    external: true
+
 services:
   heimdall:
     image: lscr.io/linuxserver/heimdall
@@ -13,4 +18,6 @@ services:
     ports:
       - 8006:80
       - 406:443
+    networks:
+      - swagnet
     restart: unless-stopped

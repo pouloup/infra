@@ -13,6 +13,7 @@ modules=(
     # duckdns
     # photoprism
     # tailscale
+    swag
     bitwarden
     code-server
     docker-plex

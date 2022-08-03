@@ -1,5 +1,10 @@
 ---
 version: "3.8"
+
+networks:
+  swagnet:
+    external: true
+
 services:
   transmission:
     image: lscr.io/linuxserver/transmission:latest
@@ -22,4 +27,6 @@ services:
       - 9091:9091
       - 51413:51413
       - 51413:51413/udp
+    networks:
+      - swagnet
     restart: unless-stopped

@@ -8,6 +8,9 @@ pushd "$HOME"/Documents || exit
 popd
 
 pushd "$HOME"/infra || exit
+    # lol Readme
+     cp README.md "$DEST_DIR"
+
     # bitwarden conf backup
     # cp bitwarden/caddy.env "$DEST_DIR"/bitwarden
     cp bitwarden/Caddyfile "$DEST_DIR"/bitwarden

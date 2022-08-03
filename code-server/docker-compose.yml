@@ -5,6 +5,10 @@ secrets:
   code_password:
     file: code.password
 
+networks:
+  swagnet:
+    external: true
+
 services:
   code-server:
     image: lscr.io/linuxserver/code-server:latest
@@ -28,4 +32,6 @@ services:
       - ../../.:/config/workspace
     ports:
       - 8443:8443
+    networks:
+      - swagnet
     restart: unless-stopped

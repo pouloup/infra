@@ -1,11 +1,18 @@
 version: "3.8"
 
+networks:
+  swagnet:
+    external: true
+
 services:
   web:
-    network_mode: "host" # TODO: We can remove this later with some iptables magic
     image: tailscale/tailscale:latest
-    restart: on-failure
-    stop_grace_period: 1m
     command: "sh -c 'tailscale web --listen 0.0.0.0:8240 & exec tailscaled --tun=userspace-networking'"
+    ports:
+      - 8240:8240
     volumes:
       - ./data:/var/lib
+    networks:
+      - swagnet
+    stop_grace_period: 1m
+    restart: on-failure

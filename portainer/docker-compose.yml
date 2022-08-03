@@ -1,6 +1,10 @@
 ---
 version: "3.8"
 
+networks:
+  swagnet:
+    external: true
+
 services:
   portainer:
     image: portainer/portainer-ce:latest
@@ -12,6 +16,8 @@ services:
       - 8000:8000
       - 9000:9000
       - 9443:9443
+    networks:
+      - swagnet
     restart: always
 
 volumes:

@@ -1,0 +1,36 @@
+---
+version: "3.8"
+
+secrets:
+  duckdns_token:
+    file: duckdns.token
+
+networks:
+  swagnet:
+    name: swagnet
+    external: false
+
+services:
+  swag:
+    image: lscr.io/linuxserver/swag
+    container_name: swag
+    secrets:
+      - duckdns_token
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=${U_UID}
+      - PGID=${U_GID}
+      - TZ=Europe/Paris
+      - URL=dune-local.duckdns.org
+      - SUBDOMAINS=wildcard
+      - VALIDATION=duckdns
+      - FILE__DUCKDNSTOKEN=/run/secrets/duckdns_token
+    volumes:
+      - ./data:/config
+    ports:
+      - 443:443
+      - 80:80
+    networks:
+      - swagnet
+    restart: unless-stopped

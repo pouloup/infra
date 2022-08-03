@@ -7,6 +7,8 @@ secrets:
     file: postgres.password
 
 networks:
+  swagnet:
+    external: true
   gitea:
     external: false
 
@@ -28,6 +30,7 @@ services:
     restart: always
     networks:
       - gitea
+      - swagnet
     volumes:
       - ./data/gitea:/data
       - /etc/timezone:/etc/timezone:ro

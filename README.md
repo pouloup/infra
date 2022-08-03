@@ -1,6 +1,6 @@
 # Docker-Envs-PI4
 
-Docker Env for PI4
+Docker Envs for PI4
 
 # ROADMAP
 
@@ -12,3 +12,4 @@ Docker Env for PI4
 # Enhancement
 
 - Add caddy.env but hide the duckdns token
+- DON'T FORGET TO REMOVE TRAILING NEWLINE AT THE END OF DUCKDNS TOKEN SECRET FILE FFS

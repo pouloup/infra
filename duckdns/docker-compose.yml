@@ -1,6 +1,10 @@
 ---
 version: "3.8"
 
+networks:
+  swagnet:
+    external: true
+
 secrets:
   duckdns_token:
     file: duckdns.token
@@ -20,4 +24,6 @@ services:
       - LOG_FILE=true #optional
     volumes:
       - ./data/config:/config #optional
+    networks:
+      - swagnet
     restart: unless-stopped

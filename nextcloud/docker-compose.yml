@@ -1,5 +1,9 @@
 version: "3.8"
 
+networks:
+  swagnet:
+    external: true
+
 secrets:
   mysql_password:
     file: mysql.password
@@ -41,3 +45,5 @@ services:
       MYSQL_HOST: nextcloud_db
       PUID: ${U_UID}
       PGID: ${U_GID}
+    networks:
+      - swagnet
