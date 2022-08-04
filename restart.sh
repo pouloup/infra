@@ -32,11 +32,11 @@ if [ $# -eq 0 ]
     do
         echo "re.starting module : $index"
         pushd "$index"
-        docker-compose up -d
+        docker-compose restart
         popd
     done
 else
     pushd "$1"
-    docker-compose up -d
+    docker-compose restart
     popd
 fi

@@ -2,18 +2,18 @@
 
 declare -a modules
 modules=(
-    # dashy
     # duckdns
     # photoprism
     # tailscale
     swag
+    dashy
     bitwarden
     code-server
-    docker-plex
     gitea
     heimdall
     nextcloud
     pihole
+    plex
     portainer
     transmission
 )

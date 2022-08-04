@@ -31,8 +31,8 @@ services:
     container_name: nextcloud
     image: lscr.io/linuxserver/nextcloud:latest
     restart: always
-    ports:
-      - 444:443
+    # ports:
+    #   - 444:443
     links:
       - nextcloud_db
     volumes:

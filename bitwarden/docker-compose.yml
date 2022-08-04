@@ -5,9 +5,9 @@ networks:
     external: true
 
 services:
-  vaultwarden:
+  bitwarden:
     image: vaultwarden/server:latest
-    container_name: vaultwarden
+    container_name: bitwarden
     restart: always
     environment:
       - WEBSOCKET_ENABLED=true  # Enable WebSocket notifications.
@@ -16,21 +16,3 @@ services:
       - ./vw-data:/data
     networks:
       - swagnet
-
-  caddy:
-    image: caddy:2
-    container_name: caddy
-    restart: always
-    ports:
-      - 8080:80
-      - 443:443
-    volumes:
-      - ./caddy:/usr/bin/caddy  # Your custom build of Caddy.
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - ./caddy-config:/config
-      - ./caddy-data:/data
-    env_file:
-      - caddy.env
-    environment:
-      - EMAIL=paul.ledenn@protonmail.com
-      - LOG_FILE=/data/access.log

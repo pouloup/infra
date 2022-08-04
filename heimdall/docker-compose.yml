@@ -15,9 +15,9 @@ services:
       - TZ=Europe/Paris
     volumes:
       - ./config:/config
-    ports:
-      - 8006:80
-      - 406:443
+    # ports:
+    #   - 8006:80
+    #   - 406:443
     networks:
       - swagnet
     restart: unless-stopped
