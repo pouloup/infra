@@ -1,22 +1,11 @@
 #!/bin/bash
 
-declare -a modules
-modules=(
-    # duckdns
-    # photoprism
-    # tailscale
-    swag
-    dashy
-    bitwarden
-    code-server
-    gitea
-    heimdall
-    nextcloud
-    pihole
-    plex
-    portainer
-    transmission
-)
+source ./env.sh
+
+if [ -z "$U_UID" ] || [ -z "$U_GID" ]; then
+    echo "Env file misbehaving, please check."
+    exit 1
+fi
 
 if [ $# -eq 0 ]
   then

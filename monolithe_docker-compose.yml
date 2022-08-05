@@ -1,0 +1,241 @@
+---
+version: "3.8"
+
+secrets:
+  code_password:
+    file: code-server/code.password
+  duckdns_token:
+    file: swag/duckdns.token
+  gitea_password:
+    file: gitea/gitea.password
+  postgres_password:
+    file: gitea/postgres.password
+  mysql_password:
+    file: nextcloud/mysql.password
+  mysql_root_password:
+    file: nextcloud/mysql_root.password
+  pihole_password:
+    file: pihole/pihole.password
+
+networks:
+  default:
+    name: infra
+    external: false
+
+services:
+  swag:
+    image: lscr.io/linuxserver/swag
+    container_name: swag
+    secrets:
+      - duckdns_token
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=${U_UID}
+      - PGID=${U_GID}
+      - TZ=Europe/Paris
+      - URL=dune-local.duckdns.org
+      - SUBDOMAINS=wildcard
+      - VALIDATION=duckdns
+      - FILE__DUCKDNSTOKEN=/run/secrets/duckdns_token
+      - DOCKER_MODS=linuxserver/mods:swag-dashboard
+    volumes:
+      - ./swag/data:/config
+    ports:
+      - 443:443
+      - 80:80
+      - 81:81
+    restart: unless-stopped
+
+  heimdall:
+    image: lscr.io/linuxserver/heimdall
+    container_name: heimdall
+    environment:
+      - PUID=${U_UID}
+      - PGID=${U_GID}
+      - TZ=Europe/Paris
+    volumes:
+      - ./heimdall/config:/config
+    restart: unless-stopped
+
+  bitwarden:
+    image: vaultwarden/server:latest
+    container_name: bitwarden
+    environment:
+      - WEBSOCKET_ENABLED=true  # Enable WebSocket notifications.
+      - SIGNUPS_ALLOWED=false
+    volumes:
+      - ./bitwarden/vw-data:/data
+    restart: always
+
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    secrets:
+      - pihole_password
+    environment:
+      TZ: 'Europe/Paris'
+      WEBPASSWORD_FILE: '/run/secrets/pihole_password'
+    volumes:
+      - ./pihole/etc-pihole:/etc/pihole
+      - ./pihole/etc-dnsmasq.d:/etc/dnsmasq.d
+      # run unless you like errors & chmod 666 on file
+      # mkdir -p ./var-log/lighttpd ; touch ./var-log/pihole.log ; touch ./var-log/lighttpd/access.log ; touch ./var-log/lighttpd/error.log
+      # chmod 666 ./var-log/pihole.log ; chmod 666 ./var-log/lighttpd/access.log ; chmod 666 ./var-log/lighttpd/error.log
+      - ./pihole/var-log:/var/log
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - '53:53/tcp'
+      - '53:53/udp'
+      # - "67:67/udp" # only if used as dhcp
+    restart: unless-stopped
+
+  nextcloud:
+    container_name: nextcloud
+    image: lscr.io/linuxserver/nextcloud:latest
+    volumes:
+      - ./nextcloud/nextcloud/appdata:/config
+      - ./nextcloud/nextcloud/data:/data
+    depends_on:
+      - nextcloud_db
+    environment:
+      MYSQL_PASSWORD_FILE: '/run/secrets/mysql_password'
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: nextcloud
+      MYSQL_HOST: nextcloud_db
+      PUID: ${U_UID}
+      PGID: ${U_GID}
+    restart: always
+
+  nextcloud_db:
+    container_name: nextcloud_db
+    image: mariadb
+    secrets:
+      - mysql_password
+      - mysql_root_password
+    volumes:
+      - ./nextcloud/nextcloud/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: '/run/secrets/mysql_root_password'
+      MYSQL_PASSWORD_FILE: '/run/secrets/mysql_password'
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: nextcloud
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
+    restart: always
+
+  code-server:
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: code-server
+    secrets:
+      - code_password
+    environment:
+      - PUID=${U_UID}
+      - PGID=${U_GID}
+      - TZ=Europe/Paris
+      - FILE__PASSWORD=/run/secrets/code_password
+      - DEFAULT_WORKSPACE=/config/workspace
+    volumes:
+      - ./code-server/data/config:/config
+      - .:/config/workspace
+    restart: unless-stopped
+
+  dashy:
+    image: lissy93/dashy:latest
+    container_name: dashy
+    environment:
+      - NODE_ENV=production
+      - UID=${U_UID}
+      - GID=${U_GID}
+    volumes:
+      - ./dashy/data/config.yml:/app/public/conf.yml
+    # Configure healthchecks
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'node', '/app/services/healthcheck']
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  gitea:
+    image: gitea/gitea:latest
+    container_name: gitea
+    secrets:
+      - gitea_password
+    environment:
+      - USER_UID=${U_UID}
+      - USER_GID=${U_GID}
+      - GITEA__database__DB_TYPE=postgres
+      - GITEA__database__HOST=gitea_db:5432
+      - GITEA__database__NAME=gitea
+      - GITEA__database__USER=gitea
+      - GITEA__database__PASSWD_FILE=/run/secrets/gitea_password
+      - GITEA__REPOSITORY__ENABLE_PUSH_CREATE_USER=true
+    depends_on:
+      - gitea_db
+    volumes:
+      - ./gitea/data/gitea:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+
+  gitea_db:
+    image: postgres:14
+    container_name: gitea_db
+    secrets:
+      - postgres_password
+    environment:
+      - POSTGRES_USER=gitea
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+      - POSTGRES_DB=gitea
+    volumes:
+      - ./gitea/data/db:/var/lib/postgresql/data
+    restart: always
+
+  plex:
+      image: lscr.io/linuxserver/plex:latest
+      container_name: plex
+      ports:
+        - "3005:3005/tcp"
+        - "8324:8324/tcp"
+        - "32469:32469/tcp"
+        - "1900:1900/udp"
+        - "32410:32410/udp"
+        - "32412:32412/udp"
+        - "32413:32413/udp"
+        - "32414:32414/udp"
+      environment:
+        - PUID=${U_UID}
+        - PGID=${U_GID}
+        - VERSION=latest
+      volumes:
+        - ./plex/plexmediaserver:/config
+        - /tmp:/transcode
+        - /nas:/nas
+      restart: unless-stopped
+
+  portainer:
+      image: portainer/portainer-ce:latest
+      container_name: portainer
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+        - ./portainer/portainer_data:/data
+      restart: always
+
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: transmission
+    environment:
+      - PUID=${U_UID}
+      - PGID=${U_GID}
+      - TZ=Europe/Paris
+      - TRANSMISSION_WEB_HOME=/combustion-release/
+    volumes:
+      - ./transmission/data/config:/config
+      - ./transmission/data/torrents:/watch
+      - /nas/Films:/downloads
+    ports:
+      - 51413:51413
+      - 51413:51413/udp
+    restart: unless-stopped

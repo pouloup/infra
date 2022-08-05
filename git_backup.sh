@@ -13,8 +13,8 @@ pushd "$HOME"/infra || exit
 
     # bitwarden conf backup
     # cp bitwarden/caddy.env "$DEST_DIR"/bitwarden
-    cp bitwarden/Caddyfile "$DEST_DIR"/bitwarden
-    cp bitwarden/caddy "$DEST_DIR"/bitwarden
+    # cp bitwarden/Caddyfile "$DEST_DIR"/bitwarden
+    # cp bitwarden/caddy "$DEST_DIR"/bitwarden
 
     # scripts backup
     find . -maxdepth 2 -name "*.sh" -exec cp '{}' "$DEST_DIR" \;

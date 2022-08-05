@@ -2,7 +2,7 @@
 version: "3.8"
 
 networks:
-  swagnet:
+  infra:
     external: true
 
 services:
@@ -24,9 +24,9 @@ services:
       - ./data/torrents:/watch
       - /nas/Films:/downloads
     ports:
-      # - 9091:9091
+      # - 9091:9091 # UI
       - 51413:51413
       - 51413:51413/udp
     networks:
-      - swagnet
+      - infra
     restart: unless-stopped

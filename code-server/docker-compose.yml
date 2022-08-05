@@ -6,7 +6,7 @@ secrets:
     file: code.password
 
 networks:
-  swagnet:
+  infra:
     external: true
 
 services:
@@ -15,8 +15,6 @@ services:
     container_name: code-server
     secrets:
       - code_password
-    extra_hosts:
-      abyss: '192.168.1.2'
     environment:
       - PUID=${U_UID}
       - PGID=${U_GID}
@@ -30,8 +28,6 @@ services:
     volumes:
       - ./data/config:/config
       - ../../.:/config/workspace
-    # ports:
-    #   - 8443:8443
     networks:
-      - swagnet
+      - infra
     restart: unless-stopped

@@ -2,7 +2,7 @@
 version: "3.8"
 
 networks:
-  swagnet:
+  infra:
     external: true
 
 services:
@@ -15,9 +15,9 @@ services:
     ports:
       - 8000:8000
       - 9443:9443
-    #   - 9000:9000
+      # - 9000:9000 # UI
     networks:
-      - swagnet
+      - infra
     restart: always
 
 volumes:

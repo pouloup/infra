@@ -2,7 +2,7 @@
 version: "3.8"
 
 networks:
-  swagnet:
+  infra:
     external: true
 
 services:
@@ -19,7 +19,7 @@ services:
       - 4000:80
     # Configure healthchecks
     networks:
-      - swagnet
+      - infra
     restart: unless-stopped
     healthcheck:
       test: ['CMD', 'node', '/app/services/healthcheck']

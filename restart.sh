@@ -7,24 +7,6 @@ if [ -z "$U_UID" ] || [ -z "$U_GID" ]; then
     exit 1
 fi
 
-declare -a modules
-modules=(
-    # duckdns
-    # photoprism
-    # tailscale
-    swag
-    bitwarden
-    code-server
-    dashy
-    gitea
-    heimdall
-    nextcloud
-    pihole
-    plex
-    portainer
-    transmission
-)
-
 if [ $# -eq 0 ]
   then
     echo "No arguments supplied, re.starting all modules"

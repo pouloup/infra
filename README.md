@@ -13,3 +13,4 @@ Docker Envs for PI4
 - Removed Caddy for Bitwarden
 - DON'T FORGET TO REMOVE TRAILING NEWLINE AT THE END OF DUCKDNS TOKEN SECRET FILE FFS
 - Added SWAG for reverse proxy
+- Added monolith docker-compose for networking debug purposes

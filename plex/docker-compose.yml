@@ -2,7 +2,7 @@
 version: "3.8"
 
 networks:
-  swagnet:
+  infra:
     external: true
 
 services:
@@ -10,7 +10,7 @@ services:
     image: lscr.io/linuxserver/plex:latest
     container_name: plex
     ports:
-      # - "32400:32400/tcp"
+      # - "32400:32400/tcp" # UI
       - "3005:3005/tcp"
       - "8324:8324/tcp"
       - "32469:32469/tcp"
@@ -28,5 +28,5 @@ services:
       - /tmp:/transcode
       - /nas:/nas
     networks:
-      - swagnet
+      - infra
     restart: unless-stopped

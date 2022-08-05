@@ -6,9 +6,10 @@ secrets:
     file: duckdns.token
 
 networks:
-  swagnet:
-    name: swagnet
-    external: false
+  default:
+    name: infra
+    external: true
+    driver: bridge
 
 services:
   swag:
@@ -26,11 +27,11 @@ services:
       - SUBDOMAINS=wildcard
       - VALIDATION=duckdns
       - FILE__DUCKDNSTOKEN=/run/secrets/duckdns_token
+      - DOCKER_MODS=linuxserver/mods:swag-dashboard
     volumes:
       - ./data:/config
     ports:
       - 443:443
       - 80:80
-    networks:
-      - swagnet
+      - 81:81 # UI For swag-dashboard
     restart: unless-stopped

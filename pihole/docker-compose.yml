@@ -1,3 +1,4 @@
+---
 version: "3.8"
 
 secrets:
@@ -5,7 +6,7 @@ secrets:
     file: pihole.password
 
 networks:
-  swagnet:
+  infra:
     external: true
 
 services:
@@ -29,8 +30,8 @@ services:
     ports:
       - '53:53/tcp'
       - '53:53/udp'
-      - "67:67/udp"
+      # - "67:67/udp" # only for dhcp
       # - '8053:80/tcp'
     networks:
-      - swagnet
+      - infra
     restart: unless-stopped
