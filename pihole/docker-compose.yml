@@ -31,7 +31,7 @@ services:
       - '53:53/tcp'
       - '53:53/udp'
       # - "67:67/udp" # only for dhcp
-      # - '8053:80/tcp'
+      - '8053:80/tcp'
     networks:
       - infra
     restart: unless-stopped

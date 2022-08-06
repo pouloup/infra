@@ -27,7 +27,7 @@ services:
       - DEFAULT_WORKSPACE=/config/workspace #optional
     volumes:
       - ./data/config:/config
-      - ../../.:/config/workspace
+      - .:/config/workspace
     networks:
       - infra
     restart: unless-stopped

@@ -11,10 +11,10 @@ modules=(
     # duckdns
     # photoprism
     # tailscale
+    #dashy
     swag
     bitwarden
     code-server
-    dashy
     gitea
     heimdall
     nextcloud

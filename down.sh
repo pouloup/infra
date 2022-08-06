@@ -14,7 +14,7 @@ if [ $# -eq 0 ]
     do
         echo "shutdown module : $index"
         pushd "$index"
-        docker-compose down
+        docker-compose stop
         popd
     done
 else
