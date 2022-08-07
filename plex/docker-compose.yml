@@ -10,7 +10,7 @@ services:
     image: lscr.io/linuxserver/plex:latest
     container_name: plex
     ports:
-      # - "32400:32400/tcp" # UI
+      - "32400:32400/tcp" # UI
       - "3005:3005/tcp"
       - "8324:8324/tcp"
       - "32469:32469/tcp"

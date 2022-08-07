@@ -9,15 +9,15 @@ export U_GID
 declare -a modules
 modules=(
     # duckdns
-    # photoprism
     # tailscale
-    #dashy
+    # dashy
     swag
     bitwarden
     code-server
     gitea
     heimdall
     nextcloud
+    photoprism
     pihole
     plex
     portainer
